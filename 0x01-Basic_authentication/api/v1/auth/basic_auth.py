@@ -2,6 +2,7 @@
 """Basic auth"""
 
 from api.v1.auth import Auth
+from models.user import User
 import base64
 from typing import TypeVar
 
@@ -41,3 +42,20 @@ class BasicAuth(Auth):
         if ':' not in decoded_base64_authorization_header:
             return None, None
         return tuple(decoded_base64_authorization_header.split(':'))
+
+    def user_object_from_credentials(self, user_email: str, user_pwd: str)\
+            -> TypeVar('User'):
+        """returns User instance based on his email and password"""
+        users = None
+        if not user_email or type(user_email) is not str:
+            return users
+        if not user_pwd or type(user_pwd) is not str:
+            return users
+        try:
+            users = User.search({"email": user_email})
+        except Exception as e:
+            return None
+        for user in users:
+            if user.is_valid_password(user_pwd):
+                return user
+        return None
