@@ -2,6 +2,8 @@
 """Basic auth"""
 
 from api.v1.auth import Auth
+import base64
+from typing import TypeVar
 
 
 class BasicAuth(Auth):
@@ -15,3 +17,17 @@ class BasicAuth(Auth):
             return None
         login = authorization_header.strip()[6:]
         return login
+
+    def decode_base64_authorization_header(self, base64_authorization_header:
+                                           str) -> str:
+        """decodes base 64 string"""
+        if not base64_authorization_header or\
+                type(base64_authorization_header) is not str:
+            return None
+        decoded_login: str
+        try:
+            decoded_login = base64.b64decode(base64_authorization_header)
+        except Exception as e:
+            print(e)
+            return None
+        return decoded_login
