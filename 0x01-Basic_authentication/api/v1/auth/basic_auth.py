@@ -28,6 +28,5 @@ class BasicAuth(Auth):
         try:
             decoded_login = base64.b64decode(base64_authorization_header)
         except Exception as e:
-            print(e)
             return None
-        return decoded_login
+        return decoded_login.decode()
