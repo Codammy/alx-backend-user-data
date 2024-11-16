@@ -17,9 +17,9 @@ class Auth:
             return True
         elif path in excluded_paths:
             return False
-        elif path.endswith('*/'):
+        elif:
             for p in excluded_paths:
-                if p.startswith(path[:-2]):
+                if path.startswith(p[:-1]):
                     return False
         return True
 
