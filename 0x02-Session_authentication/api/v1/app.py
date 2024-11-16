@@ -43,12 +43,12 @@ def forbidden(error) -> str:
 def function():
     """checking permission and authentication in each request"""
     path = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
+    print(auth.require_auth(request.path, path))
     if auth and auth.require_auth(request.path, path):
         if auth.authorization_header(request) is None:
             abort(401)
         if auth.current_user(request) is None:
             abort(403)
-        request.current_user = auth.current_user(request)
 
 
 if __name__ == "__main__":

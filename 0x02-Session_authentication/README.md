@@ -1,12 +1,13 @@
-# Session authentication
+# Simple API
+
 `Back-end`
-`Authentification`
+`Authentification`*
 
 Simple HTTP API for playing with `User` model.
 
 
 ## Files
-
+*
 ### `models/`
 
 - `base.py`: base of all models of the API - handle serialization to file

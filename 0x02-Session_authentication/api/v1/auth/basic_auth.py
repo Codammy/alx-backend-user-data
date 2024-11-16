@@ -29,7 +29,7 @@ class BasicAuth(Auth):
         try:
             decoded_login = base64.b64decode(base64_authorization_header)
         except Exception as e:
-           return None
+            return None
         return decoded_login.decode()
 
     def extract_user_credentials(self, decoded_base64_authorization_header)\
@@ -41,7 +41,7 @@ class BasicAuth(Auth):
             return None, None
         if ':' not in decoded_base64_authorization_header:
             return None, None
-        return tuple(decoded_base64_authorization_header.split(':'))
+        return tuple(decoded_base64_authorization_header.split(':', 1))
 
     def user_object_from_credentials(self, user_email: str, user_pwd: str)\
             -> TypeVar('User'):
@@ -61,8 +61,13 @@ class BasicAuth(Auth):
         return None
 
     def current_user(self, request=None) -> TypeVar('User'):
+        """returns uauthenticated user object"""
         authorization = self.authorization_header(request)
-        encoded_credentials = self.extract_base64_authorization_header(authorization)
-        decoded_credentials = self.decode_base64_authorization_header(encoded_credentials)
+        encoded_credentials = self.extract_base64_authorization_header(
+            authorization
+            )
+        decoded_credentials = self.decode_base64_authorization_header(
+            encoded_credentials
+            )
         email, passwd = self.extract_user_credentials(decoded_credentials)
         return self.user_object_from_credentials(email, passwd)
