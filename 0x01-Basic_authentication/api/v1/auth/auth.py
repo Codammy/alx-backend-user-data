@@ -17,7 +17,7 @@ class Auth:
             return True
         elif path in excluded_paths:
             return False
-        elif:
+        else:
             for p in excluded_paths:
                 if path.startswith(p[:-1]):
                     return False
