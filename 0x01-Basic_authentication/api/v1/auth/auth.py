@@ -13,11 +13,15 @@ class Auth:
         """ determines if path requires authentication"""
         if path and not path.endswith('/'):
             path += '/'
-        if path is None or excluded_paths is None or\
-                path not in excluded_paths:
+        if path is None or excluded_paths is None:
             return True
         elif path in excluded_paths:
             return False
+        elif path.endswith('*/'):
+            for p in excluded_paths:
+                if p.startswith(path[:-2]):
+                    return False
+        return True
 
     def authorization_header(self, request=None) -> str:
         """ authorization header """
