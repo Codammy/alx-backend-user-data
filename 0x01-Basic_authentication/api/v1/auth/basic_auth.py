@@ -61,6 +61,7 @@ class BasicAuth(Auth):
         return None
 
     def current_user(self, request=None) -> TypeVar('User'):
+        """returns uauthenticated user object"""
         authorization = self.authorization_header(request)
         encoded_credentials = self.extract_base64_authorization_header(authorization)
         decoded_credentials = self.decode_base64_authorization_header(encoded_credentials)
