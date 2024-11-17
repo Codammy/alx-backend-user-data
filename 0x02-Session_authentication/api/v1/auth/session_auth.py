@@ -5,6 +5,7 @@
 from api.v1.auth import Auth
 import uuid
 from typing import Dict
+from models.user import User
 
 
 class SessionAuth(Auth):
@@ -21,8 +22,13 @@ class SessionAuth(Auth):
         self.user_id_by_session_id[session_id] = user_id
         return session_id
 
-    def user_id_for_session_id(self, session_id: str = None) -> str | None:
+    def user_id_for_session_id(self, session_id: str = None) -> str:
         """returns a user id using it session_id as key"""
         if not session_id or type(session_id) is not str:
             return None
         return self.user_id_by_session_id.get(session_id)
+
+    def current_user(self, request=None):
+        session_id = self.session_cookie(request)
+        user_id = self.user_id_for_session_id(session_id)
+        return User.get(user_id)
