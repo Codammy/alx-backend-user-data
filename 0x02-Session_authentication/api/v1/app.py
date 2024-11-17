@@ -17,7 +17,7 @@ if auth == "basic_auth":
     from api.v1.auth.basic_auth import BasicAuth
     auth = BasicAuth()
 elif auth == "basic_auth":
-    from api.v1.auth.sesion_auth import SessionAuth
+    from api.v1.auth.session_auth import SessionAuth
     auth = SessionAuth()
 else:
     from api.v1.auth import Auth
