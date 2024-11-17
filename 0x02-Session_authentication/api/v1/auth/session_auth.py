@@ -13,6 +13,7 @@ class SessionAuth(Auth):
 
     def create_session(self, user_id: str = None)\
             -> str:
+        """creates and store a user session using their id"""
         if user_id is None:
             return None
         if type(user_id) is not str:
