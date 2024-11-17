@@ -4,12 +4,13 @@
 
 from api.v1.auth import Auth
 import uuid
+from typing import Dict
 
 
 class SessionAuth(Auth):
     """Session auth class
     """
-    user_id_by_session_id = {}
+    user_id_by_session_id: Dict[str, str] = {}
 
     def create_session(self, user_id: str = None)\
             -> str:
@@ -20,7 +21,7 @@ class SessionAuth(Auth):
         self.user_id_by_session_id[session_id] = user_id
         return session_id
 
-    def user_id_for_session_id(self, session_id: str = None) -> str:
+    def user_id_for_session_id(self, session_id: str = None) -> str | None:
         """returns a user id using it session_id as key"""
         if not session_id or type(session_id) is not str:
             return None
