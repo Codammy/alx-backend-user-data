@@ -2,7 +2,7 @@
 """view that handles session authentication
 - including: login and logout views
 """
-from flask import request, jsonify, make_response
+from flask import request, jsonify, make_response, abort
 from models.user import User
 from os import getenv
 from api.v1.views import app_views
@@ -31,3 +31,13 @@ def login():
             response.set_cookie(getenv('SESSION_NAME'), session_id)
             return response
     return jsonify({"error": "wrong password"}), 401
+
+
+@app_views.route('/auth_session/logout', methods=['DELETE'],
+                 strict_slashes=False)
+def logout():
+    """destroys a user session"""
+    from api.v1.app import auth
+    if not auth.destroy_session(request):
+        abort(404)
+    return jsonify({}), 200
