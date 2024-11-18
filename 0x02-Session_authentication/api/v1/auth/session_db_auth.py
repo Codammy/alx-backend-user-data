@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+SessionDBAuth
 """
 from api.v1.auth.session_exp_auth import SessionExpAuth
 from models.user_session import UserSession
@@ -8,6 +9,7 @@ from os import getenv
 
 class SessionDBAuth(SessionExpAuth):
     """
+    Class for SessionDBAuth
     """
     def create_session(self, user_id=None):
         """creates and stores new instance of
