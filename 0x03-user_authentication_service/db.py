@@ -52,6 +52,10 @@ class DB:
         """
         try:
             user = self.find_user_by(id=user_id)
+            user_attr = user.__dict__.keys()
+            for key in kwargs.keys():
+                if not key in user_attr:
+                    raise ValueError
             user.__dict__.update(**kwargs)
             Session().commit()
         except Exception as e:
