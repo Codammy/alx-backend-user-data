@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
+from sqlalchemy.orm.exc import NoResultFound
 
 from user import Base, User
 
@@ -34,4 +35,14 @@ class DB:
         session = self._session()
         session.add(user)
         session.commit()
+        return user
+
+    def find_user_by(self, **kwargs: dict) -> User:
+        """Takes in arbituary keyword argument
+           and returns the first row found in the users table
+        """
+        session = self._session()
+        user = session.query(User).filter_by(**kwargs).first()
+        if not user:
+            raise NoResultFound
         return user
