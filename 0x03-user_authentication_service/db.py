@@ -37,7 +37,7 @@ class DB:
         session.commit()
         return user
 
-    def find_user_by(self, kwargs) -> User:
+    def find_user_by(self, **kwargs) -> User:
         """Takes in arbituary keyword argument
            and returns the first row found in the users table
         """
