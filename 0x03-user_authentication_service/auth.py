@@ -5,12 +5,18 @@ import bcrypt
 from db import DB
 from user import User
 from sqlalchemy.orm.exc import NoResultFound
+from uuid import uuid4
 
 
 def _hash_password(password: str) -> bytes:
     """encrypts str password and return bytes password"""
     salt = bcrypt.gensalt()
     return bcrypt.hashpw(password.encode(), salt)
+
+
+def _generate_uuid() -> str:
+    """returns a representation of a new UUID"""
+    return str(uuid4())
 
 
 class Auth:
@@ -41,3 +47,56 @@ class Auth:
         except NoResultFound:
             return False
         return True
+
+    def create_session(self, email: str) -> str:
+        """creates and stores a user session
+        """
+        try:
+            user = self._db.find_user_by(email=email)
+            session_id = _generate_uuid()
+            self._db.update_user(user.id, session_id=session_id)
+            return session_id
+        except NoResultFound:
+            pass
+
+    def get_user_from_session_id(self, session_id: str) -> User:
+        """get user by sesion id"""
+        if not session_id:
+            return None
+        try:
+            user = self._db.find_user_by(session_id=session_id)
+            return user
+        except NoResultFound:
+            return None
+
+    def destroy_session(self, user_id: str):
+        """destroys current user session"""
+        try:
+            self._db.update_user(user_id=user_id, session_id=None)
+        except Exception:
+            pass
+        return None
+
+    def get_reset_password_token(self, email: str) -> str:
+        """returns user password reset token"""
+        try:
+            self._db.find_user_by(email=email)
+        except NoResultFound:
+            raise ValueError
+
+        reset_token = _generate_uuid()
+        self._db.update_user(email, reset_token=reset_token)
+        return reset_token
+
+    def update_password(self, reset_token: str, password: str):
+        """updates user password based on reset_token validity"""
+        try:
+            user = self._db.find_user_by(reset_token=reset_token)
+            salt = bcrypt.gensalt()
+            password = bcrypt.hashpw(password.encode(), salt)
+            self._db.update_user(user.id,
+                                 hashed_password=password,
+                                 reset_token=None
+                                 )
+        except NoResultFound:
+            raise ValueError
