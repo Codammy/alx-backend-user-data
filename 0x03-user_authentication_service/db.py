@@ -16,7 +16,7 @@ class DB:
 
     def __init__(self):
         "Initializes a new DB instance"
-        self._engine = create_engine("sqlite:///a.db", echo=True)
+        self._engine = create_engine("sqlite:///a.db", echo=False)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
@@ -25,7 +25,7 @@ class DB:
     def _session(self) -> Session:
         """Memoized session object"""
         if self.__session is None:
-            DBSession = sessionmaker(bind=self._engine, expire_on_commit=True)
+            DBSession = sessionmaker(bind=self._engine, expire_on_commit=False)
             self.__session = DBSession()
         return self.__session
 
