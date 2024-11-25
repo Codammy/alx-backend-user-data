@@ -51,7 +51,7 @@ def logout():
     user = auth.get_user_from_session_id(session_id)
     if user:
         auth.destroy_session(user.id)
-        return flask.redirect(flask.url_for('/root'))
+        return flask.redirect(flask.url_for('root'))
     return flask.make_response(), 403
 
 
