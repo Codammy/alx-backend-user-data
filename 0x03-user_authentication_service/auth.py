@@ -92,8 +92,7 @@ class Auth:
         """updates user password based on reset_token validity"""
         try:
             user = self._db.find_user_by(reset_token=reset_token)
-            salt = bcrypt.gensalt()
-            password = bcrypt.hashpw(password.encode(), salt)
+            password = _hash_password(password)
             self._db.update_user(user.id,
                                  hashed_password=password,
                                  reset_token=None

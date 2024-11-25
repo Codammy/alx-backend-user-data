@@ -85,7 +85,7 @@ def reset_pwd():
         new_pwd = flask.request.form.get('password')
         AUTH.update_password(reset_token, new_pwd)
         return flask.jsonify({"email": email, "message": "Password updated"})
-    except Exception:
+    except Exception as e:
         return flask.make_response(), 403
 
 
