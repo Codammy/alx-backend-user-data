@@ -31,3 +31,13 @@ class Auth:
         if type(password) is not bytes:
             password = _hash_password(password)
         return self._db.add_user(email, password)
+
+    def valid_login(self, email, password) -> bool:
+        """validates user login credentials"""
+        try:
+            user = self._db.find_user_by(email=email)
+            if not bcrypt.checkpw(password.encode(), user.hashed_password):
+                return False
+        except NoResultFound:
+            return False
+        return True
