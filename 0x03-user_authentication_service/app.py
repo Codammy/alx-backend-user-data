@@ -5,7 +5,7 @@ import flask
 from auth import Auth
 
 app = flask.Flask(__name__)
-auth = Auth()
+AUTH = Auth()
 
 
 @app.route('/', methods=['GET'], strict_slashes=False)
@@ -21,7 +21,7 @@ def user_route():
     email = req.form.get('email')
     password = req.form.get('password')
     try:
-        auth.register_user(email=email, password=password)
+        AUTH.register_user(email=email, password=password)
     except ValueError as v:
         return flask.jsonify({"message": "email already registered"}), 400
     return flask.jsonify({"email": email, "message": "user created"})
@@ -32,8 +32,8 @@ def login():
     """creates a new session for user and store in cookie"""
     email = flask.request.form.get('email')
     password = flask.request.form.get('password')
-    if auth.valid_login(email, password):
-        session_id = auth.create_session(email)
+    if AUTH.valid_login(email, password):
+        session_id = AUTH.create_session(email)
         res = flask.make_response(flask.jsonify({
             "email": email,
             "message": "logged in"
@@ -48,9 +48,9 @@ def login():
 def logout():
     """destroys user session"""
     session_id = flask.request.cookies.get('session_id')
-    user = auth.get_user_from_session_id(session_id)
+    user = AUTH.get_user_from_session_id(session_id)
     if user:
-        auth.destroy_session(user.id)
+        AUTH.destroy_session(user.id)
         return flask.redirect(flask.url_for('root'))
     return flask.make_response(), 403
 
@@ -59,7 +59,7 @@ def logout():
 def profile():
     """returns user profile based on cookie value"""
     session_id = flask.request.cookies.get('session_id')
-    user = auth.get_user_from_session_id(session_id)
+    user = AUTH.get_user_from_session_id(session_id)
     if user:
         return flask.jsonify({"email": user.email})
     return flask.make_response(), 403
@@ -70,7 +70,7 @@ def get_pwd_rest_token():
     """responds with password reset token"""
     try:
         email = flask.request.form.get('email')
-        token = auth.get_reset_password_token(email)
+        token = AUTH.get_reset_password_token(email)
         return flask.jsonify({"email": email, "reset_token": token})
     except Exception:
         return flask.make_response(), 403
@@ -83,7 +83,7 @@ def reset_pwd():
         email = flask.request.form.get('email')
         reset_token = flask.request.form.get('reset_token')
         new_pwd = flask.request.form.get('password')
-        auth.update_password(reset_token, new_pwd)
+        AUTH.update_password(reset_token, new_pwd)
         return flask.jsonify({"email": email, "message": "Password updated"})
     except Exception:
         return flask.make_response(), 403
