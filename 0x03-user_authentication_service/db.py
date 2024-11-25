@@ -16,7 +16,7 @@ class DB:
 
     def __init__(self):
         "Initializes a new DB instance"
-        self._engine = create_engine("sqlite:///a.db", echo=False)
+        self._engine = create_engine("sqlite:///a.db", echo=True)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
@@ -26,13 +26,13 @@ class DB:
         """Memoized session object"""
         if self.__session is None:
             DBSession = sessionmaker(bind=self._engine, expire_on_commit=False)
-            self.__session = DBSession
+            self.__session = DBSession()
         return self.__session
 
     def add_user(self, email: str, hashed_password: str) -> User:
         """creates a new user"""
         user = User(email=email, hashed_password=hashed_password)
-        session = self._session()
+        session = self._session
         session.add(user)
         session.commit()
         return user
@@ -41,7 +41,7 @@ class DB:
         """Takes in arbituary keyword argument
            and returns the first row found in the users table
         """
-        session = self._session()
+        session = self._session
         user = session.query(User).filter_by(**kwargs).first()
         if not user:
             raise NoResultFound
@@ -50,13 +50,13 @@ class DB:
     def update_user(self, user_id: int, **kwargs) -> None:
         """updates user based on `user_id` to kwargs
         """
+        session = self._session
         try:
             user = self.find_user_by(id=user_id)
-            user_attr = user.__dict__.keys()
-            for key in kwargs.keys():
-                if key not in user_attr:
+            for key, value in kwargs.items():
+                if not hasattr(user, key):
                     raise ValueError
-            user.__dict__.update(**kwargs)
-            Session().commit()
+                setattr(user, key, value)
+            session.commit()
         except Exception as e:
             raise ValueError
